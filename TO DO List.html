@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <style>
+    @font-face {
+        font-family: 'Open_Sans';
+    src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    }
+    body {
+      font-family: 'Open_Sans' !important;
+      font-size: 20px;
+    }
+    #taskList li {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Task List</h2>
+  <input type="text" id="taskInput" placeholder="Enter a new task">
+  <button onclick="addTask()">Add Task</button>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    let tasks = [];
+
+// Load tasks from localStorage
+window.onload = () => {
+  const saved = localStorage.getItem('tasks');
+  if (saved) {
+    tasks = JSON.parse(saved);
+    tasks.forEach(task => addTaskToDOM(task.text, task.id, task.completed));
+  }
+};
+
+//function to save the entered tasks in local storage
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+//function to add new task by taking the element taskInput and if no tasks alerts a pop-up
+function addTask() {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+  if (!text) {
+    alert('Please enter a task.');
+    return;
+  }
+
+  const id = Date.now();//to identify tasks created at a point of time
+  const taskObj = { id, text, completed: false };
+  tasks.push(taskObj);
+  saveTasks();
+  addTaskToDOM(text, id, false);
+  input.value = '';
+}
+
+function addTaskToDOM(text, id, completed) {/*checks whether the task is completed 
+or not and proceeds only if it is false*/
+  const li = document.createElement('li');
+  li.setAttribute('data-id', id);
+
+  li.innerHTML = `
+    <input type="checkbox" ${completed ? 'checked' : ''} onchange="toggleComplete(${id}, this.checked)">
+    <span>${text}</span>
+    <span class="completed-label" style="margin-left:10px; color: green; font-weight: bold; display: ${completed ? 'inline' : 'none'};">Marked as complete</span>
+    <button onclick="editTask(${id})">Edit</button>
+    <button onclick="deleteTask(${id})">Delete</button>
+  `;
+
+  document.getElementById('taskList').appendChild(li);
+}
+
+function toggleComplete(id, isCompleted) {//function if the task is completed
+  const task = tasks.find(t => t.id === id);
+  if (task) {
+    task.completed = isCompleted;
+    saveTasks();
+
+    const li = document.querySelector(`[data-id="${id}"]`);
+    const label = li.querySelector('.completed-label');
+    if (isCompleted) {
+      label.style.display = 'inline';
+    } else {
+      label.style.display = 'none';
+    }
+  }
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(task => task.id !== id);
+  saveTasks();
+  document.querySelector(`[data-id="${id}"]`).remove();
+}
+
+function editTask(id) {
+  const li = document.querySelector(`[data-id="${id}"]`);
+  const span = li.querySelector('span');
+  const newText = prompt('Edit your task:', span.textContent);
+  if (newText !== null && newText.trim() !== '') {
+    span.textContent = newText.trim();
+    const task = tasks.find(t => t.id === id);
+    task.text = newText.trim();
+    saveTasks();
+  }
+}
+
+  </script>
+
+</body>
+</html>

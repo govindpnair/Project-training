@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <style>
+    @font-face {
+      font-family: 'Open_Sans';
+      src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    }
+    body {
+      font-family: 'Open_Sans' !important;
+      font-size: 20px;
+    }
+    #taskList li, #completedList li {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-left: 5px;
+    }
+    .completed-label {
+      color: green;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    #completedSection {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Task List</h2>
+  <input type="text" id="taskInput" placeholder="Enter a new task">
+  <button onclick="addTask()">Add Task</button>
+  <button onclick="toggleCompletedView()">Completed Tasks</button>
+
+  <ul id="taskList"></ul>
+
+  <div id="completedSection">
+    <h3>Completed Tasks</h3>
+    <ul id="completedList"></ul>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    // Load tasks from localStorage on page load
+    window.onload = () => {
+      const saved = localStorage.getItem('tasks');
+      if (saved) {
+        tasks = JSON.parse(saved);
+        renderTasks();
+      }
+    };
+
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function addTask() {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+
+  if (!text) {
+    alert('Please enter a task.');
+    return;
+  }
+
+  // Prevent duplicate task (case-insensitive)
+  const exists = tasks.some(task => task.text.toLowerCase() === text.toLowerCase());
+  if (exists) {
+    alert('This task already exists.');
+    return;
+  }
+
+  const id = Date.now();
+  const taskObj = { id, text, completed: false };
+  tasks.push(taskObj);
+  saveTasks();
+  renderTasks();
+  input.value = '';
+}
+
+
+    function renderTasks() {
+      document.getElementById('taskList').innerHTML = '';
+      document.getElementById('completedList').innerHTML = '';
+
+      tasks.forEach(task => {
+        if (task.completed) {
+          addCompletedTaskToDOM(task.text, task.id);
+        } else {
+          addTaskToDOM(task.text, task.id, task.completed);
+        }
+      });
+    }
+
+    function addTaskToDOM(text, id, completed) {
+      const li = document.createElement('li');
+      li.setAttribute('data-id', id);
+
+      li.innerHTML = `
+        <input type="checkbox" ${completed ? 'checked' : ''} onchange="toggleComplete(${id}, this.checked)">
+        <span>${text}</span>
+        <button onclick="editTask(${id})">Edit</button>
+        <button onclick="deleteTask(${id})">Delete</button>
+      `;
+
+      document.getElementById('taskList').appendChild(li);
+    }
+
+    function addCompletedTaskToDOM(text, id) {
+      const li = document.createElement('li');
+      li.setAttribute('data-id', id);
+
+      li.innerHTML = `
+        <input type="checkbox" checked onchange="toggleComplete(${id}, this.checked)">
+        <span>${text}</span>
+        <span class="completed-label">Marked as complete</span>
+        <button onclick="deleteTask(${id})">Delete</button>
+      `;
+
+      document.getElementById('completedList').appendChild(li);
+    }
+
+    function toggleComplete(id, isCompleted) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = isCompleted;
+        saveTasks();
+        renderTasks(); // Re-render lists
+      }
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(task => task.id !== id);
+      saveTasks();
+      renderTasks();
+    }
+
+    function editTask(id) {
+      const task = tasks.find(t => t.id === id);
+      const newText = prompt('Edit your task:', task.text);
+      if (newText !== null && newText.trim() !== '') {
+        task.text = newText.trim();
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function toggleCompletedView() {
+      const section = document.getElementById('completedSection');
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+
+</body>
+</html>
