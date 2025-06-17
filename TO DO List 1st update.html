@@ -6,36 +6,41 @@
   <style>
     
     body {
-      font-family: Georgia, 'Times New Roman', Times, serif;
-      background-color: #115210;
+      font-family: Helvetica, sans-serif;
+      background-color: #3498db;
       margin: 0;
       padding: 40px;
       font-size: 25px;
-      color: #333;
+      color: black;
     }
 
-    h2, h3 {
-      color: #0a0f13;
-    } <!-- upto here-->
+    #taskList li, #completedList li {
+      margin-bottom: 5px;
+    }
+ 
 
     input[type="text"] {
       padding: 12px;
       width: 250px;
-      border: 1px solid #ccc;
+      border: 2px solid #3498db;
       border-radius: 6px;
       outline: none;
       transition: all 0.3s ease;
       font-size: 16px;
+      color: #3498db;
     }
 
     input[type="text"]:focus {
-      border-color: #3498db;
+      border-color: black;
+      color: #2c2c5c;
       box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
     }
 
     button {
-      padding: 12px 16px;
-      background-color: #3498db;
+      margin-left: 5px;
+      font-family: Helvetica, sans-serif;
+      padding: 12px;
+      background-color: #e77c84;
       color: white;
       border: none;
       border-radius: 6px;
@@ -44,33 +49,59 @@
       transition: background-color 0.3s ease;
     }
 
+    select, input[type="datetime-local"] {
+  padding: 12px;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  border: 2px solid #3498db;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.3s ease;
+  color: #020406;
+  background-color: white;
+}
+
+select:focus, input[type="datetime-local"]:focus {
+  border-color: black;
+  color: #2c2c5c;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+}
+
+
     button:hover {
       background-color: #2980b9;
     }
-
-    ul {
+  
+    ul { 
       list-style-type: none;
       padding-left: 0;
       margin-top: 20px;
     }
 
-    li {
-      background-color: #ffffff;
-      padding: 12px 16px;
-      margin-bottom: 10px;
+    li { 
+      background-color: rgb(240, 249, 240);
+      padding: 8px 100px;
+      margin-bottom: 8px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      
     }
 
-    .completed-label {
-      color: green;
-      font-weight: bold;
-      margin-left: 15px;
+    .task-content{
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
+    .button-group{
+      display: flex;
+      gap: 10px;
+    }
+
+    
     #completedSection {
       display: none;
       margin-top: 30px;
@@ -78,31 +109,48 @@
       border-top: 1px solid #ddd;
     }
 
-    .task-buttons button {
-      margin-left: 8px;
-      background-color: #2ecc71;
+    .delete-content{
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .task-buttons button.delete {
-      background-color: #e74c3c;
+    .delete-buttongrp{
+      display: flex;
+      gap: 10px;
     }
 
-    .task-buttons button:hover {
-      opacity: 0.9;
-    }
   </style>
 </head>
 <body>
 
-  <h2>Task List</h2>
-  <input type="text" id="taskInput" placeholder="Enter a new task">
-  <button onclick="addTask()">Add Task</button>
-  <button onclick="toggleCompletedView()">Completed Tasks</button>
+  <h2>TASK LIST</h2>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+  <div>
+    <input type="text" id="taskInput" placeholder="Enter a new task">
+    <button onclick="addTask()">Add Task</button>
+    <button onclick="toggleCompletedView()">View the Completed Tasks</button>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <select id="breachSelect" onchange="toggleBreachInput()">
+      <option value="" disabled selected hidden>Breach Limit?</option>
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+    <input type="datetime-local" id="breachTimeInput" style="display: none;">
+  </div>
+</div>
 
-  <ul id="taskList"></ul>
+
+  <h3>Breach Time Tasks</h3>
+<ul id="breachTaskList"></ul>
+
+<h3>Tasks without Breach Time</h3>
+<ul id="noBreachTaskList"></ul>
+
 
   <div id="completedSection">
-    <h3>Completed Tasks</h3>
+    <h2>COMPLETED TASKS</h2>
     <ul id="completedList"></ul>
   </div>
 </body>
@@ -114,7 +162,12 @@
     window.onload = () => {
       const saved = localStorage.getItem('tasks');
       if (saved) {
-        tasks = JSON.parse(saved);
+        tasks = JSON.parse(saved).map(task => {
+           return {
+        ...task,
+        breachTime: task.breachTime ? new Date(task.breachTime) : null
+      };
+        });
         renderTasks();
       }
     };
@@ -123,8 +176,17 @@
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
+    function toggleBreachInput() {
+  const breachInput = document.getElementById('breachTimeInput');
+  const breachChoice = document.getElementById('breachSelect').value;
+
+  breachInput.style.display = (breachChoice === 'yes') ? 'inline' : 'none';
+    }
+
     function addTask() {
   const input = document.getElementById('taskInput');
+  const breachChoice = document.getElementById('breachSelect').value;
+  const breachTimeRaw = document.getElementById('breachTimeInput').value;
   const text = input.value.trim();
 
   if (!text) {
@@ -138,56 +200,102 @@
     alert('This task already exists.');
     return;
   }
+  const taskObj = {
+    id: Date.now(),
+    text: text,
+    completed: false
+  };
 
-  const id = Date.now();
-  const taskObj = { id, text, completed: false };
+  if (breachChoice === 'yes' && breachTimeRaw) {
+    taskObj.breachTime = new Date(breachTimeRaw);
+  } else {
+    taskObj.breachTime = null; // No breach time
+  }
+  
   tasks.push(taskObj);
+  document.getElementById('taskInput').value = '';
+  document.getElementById('breachTimeInput').value = '';
+  document.getElementById('breachSelect').value = 'no';
+  toggleBreachInput();
   saveTasks();
   renderTasks();
-  input.value = '';
+
 }
 
 
-    function renderTasks() {
-      document.getElementById('taskList').innerHTML = '';
-      document.getElementById('completedList').innerHTML = '';
+    
+      function renderTasks() {
+  document.getElementById('breachTaskList').innerHTML = '';
+  document.getElementById('noBreachTaskList').innerHTML = '';
+  document.getElementById('completedList').innerHTML = '';
 
-      tasks.forEach(task => {
-        if (task.completed) {
-          addCompletedTaskToDOM(task.text, task.id);
-        } else {
-          addTaskToDOM(task.text, task.id, task.completed);
-        }
-      });
-    }
+  // Separate incomplete tasks
+  const breachTasks = tasks
+    .filter(t => !t.completed && t.breachTime)
+    .sort((a, b) => new Date(a.breachTime) - new Date(b.breachTime));
 
-    function addTaskToDOM(text, id, completed) {
-      const li = document.createElement('li');
-      li.setAttribute('data-id', id);
+  const noBreachTasks = tasks.filter(t => !t.completed && !t.breachTime);
 
-      li.innerHTML = `
-        <input type="checkbox" ${completed ? 'checked' : ''} onchange="toggleComplete(${id}, this.checked)">
-        <span>${text}</span>
-        <button onclick="editTask(${id})">Edit</button>
-        <button onclick="deleteTask(${id})">Delete</button>
-      `;
+  breachTasks.forEach(task => addTaskToDOM(task, 'breachTaskList'));
+  noBreachTasks.forEach(task => addTaskToDOM(task, 'noBreachTaskList'));
 
-      document.getElementById('taskList').appendChild(li);
-    }
+  // Completed tasks
+  const completedTasks = tasks.filter(t => t.completed);
+  completedTasks.forEach(task => addCompletedTaskToDOM(task));
+}
 
-    function addCompletedTaskToDOM(text, id) {
-      const li = document.createElement('li');
-      li.setAttribute('data-id', id);
 
-      li.innerHTML = `
-        <input type="checkbox" checked onchange="toggleComplete(${id}, this.checked)">
-        <span>${text}</span>
-        <span class="completed-label">Marked as complete</span>
-        <button onclick="deleteTask(${id})">Delete</button>
-      `;
+    
 
-      document.getElementById('completedList').appendChild(li);
-    }
+    function addTaskToDOM(task, targetListId) {
+
+
+  const { text, id, completed, breachTime } = task;
+  const li = document.createElement('li');
+  li.setAttribute('data-id', id);
+
+  const formattedTime = breachTime
+    ? `<span class="breach-time">breaches at: ${new Date(breachTime).toLocaleString()}</span>`
+    : ``;
+
+  li.innerHTML = `
+    <div class="task-content">
+      <input type="checkbox" ${completed ? 'checked' : ''} onchange="toggleComplete(${id}, this.checked)">
+      <span>${text}</span>
+      ${formattedTime}
+    </div>
+    <div class="button-group">
+      <button onclick="editTask(${id})">Edit</button>
+      <button onclick="deleteTask(${id})">Delete</button>
+    </div>
+  `;
+
+  document.getElementById(targetListId).appendChild(li);
+}
+
+
+    function addCompletedTaskToDOM(task) {
+  const li = document.createElement('li');
+  li.setAttribute('data-id', task.id);
+
+  const formattedTime = task.breachTime
+    ? `<span class="breach-time">(Breach: ${new Date(task.breachTime).toLocaleString()})</span>`
+    : ``;
+
+  li.innerHTML = `
+    <div class="delete-content">
+      <input type="checkbox" checked onchange="toggleComplete(${task.id}, this.checked)">
+      <span>${task.text}</span>
+      ${formattedTime}
+    </div>
+    <div class="delete-buttongrp">
+      <button onclick="deleteTask(${task.id})">Delete</button>
+    </div>
+  `;
+
+  document.getElementById('completedList').appendChild(li);
+}
+
 
     function toggleComplete(id, isCompleted) {
       const task = tasks.find(t => t.id === id);
