@@ -1,3 +1,4 @@
+
 let word = "Chicago";
 function palindrome(name){
     let upperName = name.toUpperCase();
