@@ -103,7 +103,7 @@ select:focus, input[type="datetime-local"]:focus {
 
     
     #completedSection {
-      display: none;
+      display: contents;
       margin-top: 30px;
       padding-top: 20px;
       border-top: 1px solid #ddd;
@@ -124,14 +124,26 @@ select:focus, input[type="datetime-local"]:focus {
 </head>
 <body>
 
-  <h2>TASK LIST</h2>
+  <h2>To-Do List</h2>
   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
   <div>
     <input type="text" id="taskInput" placeholder="Enter a new task">
-    <button onclick="addTask()">Add Task</button>
-    <button onclick="toggleCompletedView()">View the Completed Tasks</button>
-  </div>
-  <div style="display: flex; align-items: center; gap: 10px;">
+    <label for="categorySelect">Choose a category:</label>
+      <select id="categorySelect">
+      <option value="">--Select--</option>
+      <option value="personal">Personal</option>
+      <option value="work">Work</option>
+      <option value="academics">Academics</option>
+      <option value="miscellaneous">Miscellaneous</option>
+      </select>
+     <label for="timeTasks">Is it a daily task or not?</label>
+      <select id="timeTasks">
+      <option value="">--Select--</option>
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+      </select> 
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <label for="breachtasks">Is there a breach time or not?</label>
     <select id="breachSelect" onchange="toggleBreachInput()">
       <option value="" disabled selected hidden>Breach Limit?</option>
       <option value="no">No</option>
@@ -139,6 +151,11 @@ select:focus, input[type="datetime-local"]:focus {
     </select>
     <input type="datetime-local" id="breachTimeInput" style="display: none;">
   </div>
+    
+  <div> <br> <button onclick="addTask()">Add Task</button>
+  </div>
+  </div>
+  
 </div>
 
 
@@ -150,7 +167,7 @@ select:focus, input[type="datetime-local"]:focus {
 
 
   <div id="completedSection">
-    <h2>COMPLETED TASKS</h2>
+    <h3>Completed Tasks</h3>
     <ul id="completedList"></ul>
   </div>
 </body>
@@ -290,6 +307,7 @@ select:focus, input[type="datetime-local"]:focus {
     </div>
     <div class="delete-buttongrp">
       <button onclick="deleteTask(${task.id})">Delete</button>
+
     </div>
   `;
 
