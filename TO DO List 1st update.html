@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>To-Do List</title>
   <style>
-    
+   /* 
     body {
       font-family: Helvetica, sans-serif;
       background-color: #3498db;
@@ -119,6 +119,118 @@ select:focus, input[type="datetime-local"]:focus {
       display: flex;
       gap: 10px;
     }
+*/
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #f0f4f8, #d9e4f5);
+  margin: 0;
+  padding: 40px;
+  font-size: 18px;
+  color: #2d2d2d;
+}
+
+h2, h3 {
+  color: #2c3e50;
+}
+
+input[type="text"],
+select,
+input[type="datetime-local"] {
+  padding: 12px;
+  width: 260px;
+  border: 1.5px solid #ced6e0;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #2c3e50;
+  margin: 5px 0;
+}
+
+input[type="text"]:focus,
+select:focus,
+input[type="datetime-local"]:focus {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 6px rgba(108, 92, 231, 0.3);
+}
+
+button {
+  font-family: inherit;
+  padding: 10px 18px;
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+button:hover {
+  background-color: #574b90;
+  transform: translateY(-2px);
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 20px;
+}
+
+li {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-content,
+.delete-buttongrp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.breach-time {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+#completedSection {
+  margin-top: 30px;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+label {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #34495e;
+}
 
   </style>
 </head>
@@ -129,7 +241,7 @@ select:focus, input[type="datetime-local"]:focus {
   <div>
     <input type="text" id="taskInput" placeholder="Enter a new task">
     <label for="categorySelect">Choose a category:</label>
-      <select id="categorySelect">
+      <select id="categorySelect"onchange="renderTasks()">
       <option value="">--Select--</option>
       <option value="personal">Personal</option>
       <option value="work">Work</option>
@@ -204,6 +316,9 @@ select:focus, input[type="datetime-local"]:focus {
   const input = document.getElementById('taskInput');
   const breachChoice = document.getElementById('breachSelect').value;
   const breachTimeRaw = document.getElementById('breachTimeInput').value;
+  const category = document.getElementById('categorySelect').value;
+  const isDaily = document.getElementById('timeTasks').value === 'true';
+
   const text = input.value.trim();
 
   if (!text) {
@@ -218,21 +333,23 @@ select:focus, input[type="datetime-local"]:focus {
     return;
   }
   const taskObj = {
-    id: Date.now(),
-    text: text,
-    completed: false
+    id: Date.now(), text, category, isDaily,
+    completed: false,
+    breachTime: (breachChoice === 'yes' && breachTimeRaw) ? new Date(breachTimeRaw) : null
   };
 
-  if (breachChoice === 'yes' && breachTimeRaw) {
+  /*if (breachChoice === 'yes' && breachTimeRaw) {
     taskObj.breachTime = new Date(breachTimeRaw);
   } else {
     taskObj.breachTime = null; // No breach time
-  }
+  }*/
   
   tasks.push(taskObj);
   document.getElementById('taskInput').value = '';
   document.getElementById('breachTimeInput').value = '';
   document.getElementById('breachSelect').value = 'no';
+  document.getElementById('categorySelect').value = '';
+  document.getElementById('timeTasks').value = '';
   toggleBreachInput();
   saveTasks();
   renderTasks();
@@ -246,18 +363,21 @@ select:focus, input[type="datetime-local"]:focus {
   document.getElementById('noBreachTaskList').innerHTML = '';
   document.getElementById('completedList').innerHTML = '';
 
+  const selectedCategory = document.getElementById('categorySelect').value;
+
   // Separate incomplete tasks
   const breachTasks = tasks
-    .filter(t => !t.completed && t.breachTime)
+    .filter(t => !t.completed && t.breachTime && (selectedCategory === '' || t.category === selectedCategory))
     .sort((a, b) => new Date(a.breachTime) - new Date(b.breachTime));
 
-  const noBreachTasks = tasks.filter(t => !t.completed && !t.breachTime);
+  const noBreachTasks = tasks
+    .filter(t => !t.completed && !t.breachTime && (selectedCategory === '' || t.category === selectedCategory));
 
   breachTasks.forEach(task => addTaskToDOM(task, 'breachTaskList'));
   noBreachTasks.forEach(task => addTaskToDOM(task, 'noBreachTaskList'));
 
   // Completed tasks
-  const completedTasks = tasks.filter(t => t.completed);
+  const completedTasks = tasks.filter(t => t.completed && (selectedCategory === '' || t.category === selectedCategory));
   completedTasks.forEach(task => addCompletedTaskToDOM(task));
 }
 
@@ -267,14 +387,14 @@ select:focus, input[type="datetime-local"]:focus {
     function addTaskToDOM(task, targetListId) {
 
 
-  const { text, id, completed, breachTime } = task;
+  const { text, id, completed, breachTime, isDaily } = task;
   const li = document.createElement('li');
   li.setAttribute('data-id', id);
 
   const formattedTime = breachTime
     ? `<span class="breach-time">breaches at: ${new Date(breachTime).toLocaleString()}</span>`
     : ``;
-
+  const deleteBtn = isDaily ? '' : `<button onclick="deleteTask(${id})">Delete</button>`;
   li.innerHTML = `
     <div class="task-content">
       <input type="checkbox" ${completed ? 'checked' : ''} onchange="toggleComplete(${id}, this.checked)">
@@ -283,7 +403,7 @@ select:focus, input[type="datetime-local"]:focus {
     </div>
     <div class="button-group">
       <button onclick="editTask(${id})">Edit</button>
-      <button onclick="deleteTask(${id})">Delete</button>
+      ${deleteBtn}
     </div>
   `;
 
