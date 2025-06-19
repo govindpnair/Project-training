@@ -4,190 +4,78 @@
   <meta charset="UTF-8">
   <title>To-Do List</title>
   <style>
-   /* 
-    body {
-      font-family: Helvetica, sans-serif;
-      background-color: #3498db;
-      margin: 0;
-      padding: 40px;
-      font-size: 25px;
-      color: black;
-    }
-
-    #taskList li, #completedList li {
-      margin-bottom: 5px;
-    }
- 
-
-    input[type="text"] {
-      padding: 12px;
-      width: 250px;
-      border: 2px solid #3498db;
-      border-radius: 6px;
-      outline: none;
-      transition: all 0.3s ease;
-      font-size: 16px;
-      color: #3498db;
-    }
-
-    input[type="text"]:focus {
-      border-color: black;
-      color: #2c2c5c;
-      box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
-    }
-
-    button {
-      margin-left: 5px;
-      font-family: Helvetica, sans-serif;
-      padding: 12px;
-      background-color: #e77c84;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
-    }
-
-    select, input[type="datetime-local"] {
-  padding: 12px;
-  font-family: Helvetica, sans-serif;
-  font-size: 16px;
-  border: 2px solid #3498db;
-  border-radius: 6px;
-  outline: none;
-  transition: all 0.3s ease;
-  color: #020406;
-  background-color: white;
-}
-
-select:focus, input[type="datetime-local"]:focus {
-  border-color: black;
-  color: #2c2c5c;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
-}
-
-
-    button:hover {
-      background-color: #2980b9;
-    }
-  
-    ul { 
-      list-style-type: none;
-      padding-left: 0;
-      margin-top: 20px;
-    }
-
-    li { 
-      background-color: rgb(240, 249, 240);
-      padding: 8px 100px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      
-    }
-
-    .task-content{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .button-group{
-      display: flex;
-      gap: 10px;
-    }
-
-    
-    #completedSection {
-      display: contents;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-    }
-
-    .delete-content{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .delete-buttongrp{
-      display: flex;
-      gap: 10px;
-    }
-*/
-* {
+*{
   box-sizing: border-box;
 }
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(to right, #f0f4f8, #d9e4f5);
   margin: 0;
-  padding: 40px;
-  font-size: 18px;
+  padding: 20px;
+  font-size: 16px;
   color: #2d2d2d;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 600px;
+  width: 100%;
 }
 
 h2, h3 {
   color: #2c3e50;
+  margin-bottom: 10px;
 }
 
 input[type="text"],
 select,
 input[type="datetime-local"] {
-  padding: 12px;
-  width: 260px;
+  padding: 8px 10px;
+  width: 100%;
   border: 1.5px solid #ced6e0;
-  border-radius: 8px;
-  outline: none;
-  font-size: 16px;
-  transition: all 0.3s ease;
+  border-radius: 6px;
+  font-size: 14px;
   background-color: #fff;
   color: #2c3e50;
-  margin: 5px 0;
+  margin-bottom: 10px;
 }
 
 input[type="text"]:focus,
 select:focus,
 input[type="datetime-local"]:focus {
   border-color: #6c5ce7;
-  box-shadow: 0 0 6px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.25);
 }
 
 button {
-  font-family: inherit;
-  padding: 10px 18px;
+  padding: 8px 14px;
   background-color: #6c5ce7;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   transition: background-color 0.3s ease, transform 0.2s;
 }
 
 button:hover {
   background-color: #574b90;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 ul {
   list-style-type: none;
   padding-left: 0;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 li {
   background-color: #ffffff;
-  padding: 15px 20px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.03);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -196,77 +84,124 @@ li {
 .task-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-}
-
-.delete-content,
+.button-group,
 .delete-buttongrp {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .breach-time {
-  font-size: 13px;
+  font-size: 12px;
   color: #7f8c8d;
-  margin-left: 8px;
+  margin-left: 6px;
   font-style: italic;
 }
 
 #completedSection {
-  margin-top: 30px;
+  margin-top: 20px;
   border-top: 1px solid #ccc;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 label {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: #34495e;
+  display: block;
+  margin: 4px 0;
 }
-
-  </style>
+</style>
 </head>
 <body>
+  <body>
+  <div class="container">
+    <h2 style="text-align: center;">To-Do List</h2>
 
-  <h2>To-Do List</h2>
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-  <div>
-    <input type="text" id="taskInput" placeholder="Enter a new task">
-    <label for="categorySelect">Choose a category:</label>
-      <select id="categorySelect"onchange="renderTasks()">
-      <option value="">--Select--</option>
-      <option value="personal">Personal</option>
-      <option value="work">Work</option>
-      <option value="academics">Academics</option>
-      <option value="miscellaneous">Miscellaneous</option>
+    <div>
+      <input type="text" id="taskInput" placeholder="Enter a new task">
+
+      <label for="categorySelect">Choose a category:</label>
+      <select id="categorySelect" onchange="renderTasks()">
+        <option value="">--Select--</option>
+        <option value="personal">Personal</option>
+        <option value="work">Work</option>
+        <option value="academics">Academics</option>
+        <option value="miscellaneous">Miscellaneous</option>
       </select>
-     <label for="timeTasks">Is it a daily task or not?</label>
+
+      <label for="timeTasks">Is it a daily task or not?</label>
       <select id="timeTasks">
-      <option value="">--Select--</option>
-      <option value="true">Yes</option>
-      <option value="false">No</option>
-      </select> 
+        <option value="">--Select--</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+
+      <label for="breachtasks">Is there a breach time or not?</label>
+      <select id="breachSelect" onchange="toggleBreachInput()">
+        <option value="" disabled selected hidden>--Select--</option>
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+      </select>
+
+      <input type="datetime-local" id="breachTimeInput" style="display: none;">
+
+      <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <h3>Breach Time Tasks</h3>
+    <ul id="breachTaskList"></ul>
+
+    <h3>Tasks without Breach Time</h3>
+    <ul id="noBreachTaskList"></ul>
+
+    <div id="completedSection">
+      <h3>Completed Tasks</h3>
+      <ul id="completedList"></ul>
+    </div>
+  </div>
+</body>
+
+<!--<h2>To-Do List</h2>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <div>
+      <div>
+      <input type="text" id="taskInput" placeholder="Enter a new task">
+        <div>
+          <label for="categorySelect">Choose a category:</label>
+          <select id="categorySelect"onchange="renderTasks()">
+          <option value="">--Select--</option>
+          <option value="personal">Personal</option>
+          <option value="work">Work</option>
+          <option value="academics">Academics</option>
+          <option value="miscellaneous">Miscellaneous</option>
+          </select>
+        </div>  
+      </div> 
+
+      <div>
+        <label for="timeTasks">Is it a daily task or not?</label>
+        <select id="timeTasks">
+        <option value="">--Select--</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+        </select> 
+      </div> 
+    
     <div style="display: flex; align-items: center; gap: 10px;">
       <label for="breachtasks">Is there a breach time or not?</label>
-    <select id="breachSelect" onchange="toggleBreachInput()">
-      <option value="" disabled selected hidden>Breach Limit?</option>
+      <select id="breachSelect" onchange="toggleBreachInput()">
+      <option value="" disabled selected hidden>--Select--</option>
       <option value="no">No</option>
       <option value="yes">Yes</option>
-    </select>
-    <input type="datetime-local" id="breachTimeInput" style="display: none;">
-  </div>
+      </select>
+      <input type="datetime-local" id="breachTimeInput" style="display: none;">
+    </div>
     
-  <div> <br> <button onclick="addTask()">Add Task</button>
-  </div>
-  </div>
+      <div><br><button onclick="addTask()">Add Task</button></div>
+    </div>
   
 </div>
 
@@ -281,7 +216,8 @@ label {
   <div id="completedSection">
     <h3>Completed Tasks</h3>
     <ul id="completedList"></ul>
-  </div>
+  </div>-->
+  
 </body>
 
   <script>
