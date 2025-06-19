@@ -113,6 +113,30 @@ label {
   display: block;
   margin: 4px 0;
 }
+
+.task-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.task-column {
+  flex: 1;
+  min-width: 250px;
+  background: #fdfdfd;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.task-column h3 {
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
 </style>
 </head>
 <body>
@@ -151,72 +175,29 @@ label {
       <button onclick="addTask()">Add Task</button>
     </div>
 
-    <h3>Breach Time Tasks</h3>
-    <ul id="breachTaskList"></ul>
+    <div class="task-columns">
+      <div class="task-column">
+        <h3>Breach Time Tasks</h3>
+        <ul id="breachTaskList"></ul>
+      </div>
 
-    <h3>Tasks without Breach Time</h3>
-    <ul id="noBreachTaskList"></ul>
+      <div class="task-column">
+        <h3>Tasks without Breach Time</h3>
+        <ul id="noBreachTaskList"></ul>
+      </div>
 
-    <div id="completedSection">
-      <h3>Completed Tasks</h3>
-      <ul id="completedList"></ul>
+      <div class="task-column">
+        <div id="completedSection">
+          <h3>Completed Tasks</h3>
+          <ul id="completedList"></ul>
+        </div>
+      </div>
+    
     </div>
   </div>
 </body>
 
-<!--<h2>To-Do List</h2>
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-    <div>
-      <div>
-      <input type="text" id="taskInput" placeholder="Enter a new task">
-        <div>
-          <label for="categorySelect">Choose a category:</label>
-          <select id="categorySelect"onchange="renderTasks()">
-          <option value="">--Select--</option>
-          <option value="personal">Personal</option>
-          <option value="work">Work</option>
-          <option value="academics">Academics</option>
-          <option value="miscellaneous">Miscellaneous</option>
-          </select>
-        </div>  
-      </div> 
 
-      <div>
-        <label for="timeTasks">Is it a daily task or not?</label>
-        <select id="timeTasks">
-        <option value="">--Select--</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-        </select> 
-      </div> 
-    
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <label for="breachtasks">Is there a breach time or not?</label>
-      <select id="breachSelect" onchange="toggleBreachInput()">
-      <option value="" disabled selected hidden>--Select--</option>
-      <option value="no">No</option>
-      <option value="yes">Yes</option>
-      </select>
-      <input type="datetime-local" id="breachTimeInput" style="display: none;">
-    </div>
-    
-      <div><br><button onclick="addTask()">Add Task</button></div>
-    </div>
-  
-</div>
-
-
-  <h3>Breach Time Tasks</h3>
-<ul id="breachTaskList"></ul>
-
-<h3>Tasks without Breach Time</h3>
-<ul id="noBreachTaskList"></ul>
-
-
-  <div id="completedSection">
-    <h3>Completed Tasks</h3>
-    <ul id="completedList"></ul>
-  </div>-->
   
 </body>
 
@@ -274,11 +255,6 @@ label {
     breachTime: (breachChoice === 'yes' && breachTimeRaw) ? new Date(breachTimeRaw) : null
   };
 
-  /*if (breachChoice === 'yes' && breachTimeRaw) {
-    taskObj.breachTime = new Date(breachTimeRaw);
-  } else {
-    taskObj.breachTime = null; // No breach time
-  }*/
   
   tasks.push(taskObj);
   document.getElementById('taskInput').value = '';
@@ -303,17 +279,17 @@ label {
 
   // Separate incomplete tasks
   const breachTasks = tasks
-    .filter(t => !t.completed && t.breachTime && (selectedCategory === '' || t.category === selectedCategory))
+    .filter(t => !t.completed && t.breachTime)
     .sort((a, b) => new Date(a.breachTime) - new Date(b.breachTime));
 
   const noBreachTasks = tasks
-    .filter(t => !t.completed && !t.breachTime && (selectedCategory === '' || t.category === selectedCategory));
+    .filter(t => !t.completed && !t.breachTime);
 
   breachTasks.forEach(task => addTaskToDOM(task, 'breachTaskList'));
   noBreachTasks.forEach(task => addTaskToDOM(task, 'noBreachTaskList'));
 
   // Completed tasks
-  const completedTasks = tasks.filter(t => t.completed && (selectedCategory === '' || t.category === selectedCategory));
+  const completedTasks = tasks.filter(t => t.completed);
   completedTasks.forEach(task => addCompletedTaskToDOM(task));
 }
 
@@ -391,9 +367,26 @@ label {
       const newText = prompt('Edit your task:', task.text);
       if (newText !== null && newText.trim() !== '') {
         task.text = newText.trim();
-        saveTasks();
-        renderTasks();
+         }
+      const newCategory = prompt('Edit category (personal, work, academics, miscellaneous):', task.category);
+      if (newCategory === null || newCategory.trim() === '') return;
+
+      const newBreachTimeStr = prompt('Edit breach time (leave blank to remove, or enter in format YYYY-MM-DDTHH:MM):', task.breachTime ? task.breachTime.toISOString().slice(0, 16) : '');
+      let newBreachTime = null;
+      if (newBreachTimeStr && newBreachTimeStr.trim() !== '') {
+      const parsed = new Date(newBreachTimeStr);
+      if (!isNaN(parsed)) {
+      newBreachTime = parsed;
+      } else {
+      alert('Invalid breach time format.');
+      return;
       }
+  }
+  task.text = newText.trim();
+  task.category = newCategory.trim();
+  task.breachTime = newBreachTime;
+    saveTasks();
+    renderTasks();
     }
 
     function toggleCompletedView() {
