@@ -1,0 +1,29 @@
+<h2>Hotel Check-In</h2>
+
+<form (ngSubmit)="checkIn()" #guestForm="ngForm">
+  <input
+    type="text"
+    placeholder="Guest Name"
+    [(ngModel)]="newGuest.name"
+    name="name"
+    required
+  />
+  <input
+    type="number"
+    placeholder="Room Number"
+    [(ngModel)]="newGuest.roomNumber"
+    name="roomNumber"
+    required
+    min="1"
+  />
+  <button type="submit" [disabled]="!guestForm.form.valid">Check In</button>
+</form>
+
+<h3>Current Guests</h3>
+<ul>
+  <li *ngFor="let guest of guests; let i = index">
+    {{ guest.name }} - Room {{ guest.roomNumber }}
+    <button (click)="checkOut(i)">Check Out</button>
+  </li>
+</ul>
+
