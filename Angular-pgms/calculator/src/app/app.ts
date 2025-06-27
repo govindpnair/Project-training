@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
 })
 export class App {
   protected title = 'calculator';
-  result = "hi";
+  result = "";
   arriveResult(value:string)
   {
     return this.result+= value;
