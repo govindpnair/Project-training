@@ -1,0 +1,22 @@
+<div class="main-container">
+<input class = "input-style" type = "text" id = "resultItem" [(ngModel)] = "result"/>
+<div class = "grid-container">
+  <button class = "grid-item" (click)="arriveResult('1')">1</button>
+  <button class = "grid-item" (click)="arriveResult('2')">2</button>
+  <button class = "grid-item" (click)="arriveResult('3')">3</button>
+  <button class = "grid-item" (click)="arriveResult('+')">+</button>
+  <button class = "grid-item" (click)="arriveResult('4')">4</button>
+  <button class = "grid-item" (click)="arriveResult('5')">5</button>
+  <button class = "grid-item" (click)="arriveResult('6')">6</button>
+  <button class = "grid-item" (click)="arriveResult('-')">-</button>
+  <button class = "grid-item" (click)="arriveResult('7')">7</button>
+  <button class = "grid-item" (click)="arriveResult('8')">8</button>
+  <button class = "grid-item" (click)="arriveResult('9')">9</button>
+  <button class = "grid-item" (click)="arriveResult('*')">*</button>
+  <button class = "grid-item" (click)="arriveResult('0')">0</button>
+  <button class = "grid-item" (click)="clear()">C</button>
+  <button class = "grid-item" (click)="arriveResult('/')">/</button>
+  <button class = "grid-item" (click)="calculator()">=</button>
+ </div>
+ </div>
+
